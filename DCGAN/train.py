@@ -19,8 +19,8 @@ noise_dim = 100
 num_examples = 16
 random_vector = tf.random.normal([num_examples, noise_dim])
 
-def train_step(images, gen_model, disc_model):
-    noise = tf.random.normal([images.shape[0], noise_dim])
+def train_step(images, gen_model, disc_model, batch_size):
+    noise = tf.random.normal([batch_size, noise_dim])
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_images = gen_model(noise, training=True)
@@ -32,22 +32,20 @@ def train_step(images, gen_model, disc_model):
     gen_grads = gen_tape.gradient(gen_loss, gen_model.variables)
     disc_grads = disc_tape.gradient(disc_loss, disc_model.variables)
 
-    generator_optimizer.apply_gradients(zip(gen_loss, gen_model.variables))
-    discriminator_optimizer.apply_gradients(zip(disc_loss, disc_model.variables))
+    generator_optimizer.apply_gradients(zip(gen_grads, gen_model.variables))
+    discriminator_optimizer.apply_gradients(zip(disc_grads, disc_model.variables))
 
 train_step = tf.contrib.eager.defun(train_step)
 
-def train_model(gen_model, disc_model, dataset, epochs):
+def train_model(gen_model, disc_model, dataset, epochs, batch_size):
     for epoch in range(epochs):
         print("Started")
         i = 1
         for images in dataset:
-            train_step(images, gen_model, disc_model)
-            print("Minibatch {} Done!".format(i))
+            train_step(images, gen_model, disc_model, batch_size)
             i = i+1
         
-        if epoch%5 == 0:
-            generate_and_save_images(gen_model, epoch+1, random_vector)
+        generate_and_save_images(gen_model, epoch+1, random_vector)
 
         print("Epoch {} done".format(epoch+1))
 
@@ -57,8 +55,8 @@ def generate_and_save_images(gen_model, epoch, test_input):
     fig = plt.figure(figsize=(4,4))
 
     for i in range(predictions.shape[0]):
-        plt.subplot(4,4,i)
-        plt.imshow(predictions[i,:,:,0]*127.5+127.5, cmap='grey')
+        plt.subplot(4,4,i+1)
+        plt.imshow(predictions[i,:,:,0]*127.5+127.5, cmap='gray')
         plt.axis('off')
     
     plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))

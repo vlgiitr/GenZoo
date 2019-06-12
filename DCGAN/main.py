@@ -11,4 +11,4 @@ dataset = load_data(BATCH_SIZE)
 
 gen_model, disc_model = make_models()
 
-train_model(gen_model, disc_model, dataset, EPOCHS)
+train_model(gen_model, disc_model, dataset, EPOCHS, BATCH_SIZE)
