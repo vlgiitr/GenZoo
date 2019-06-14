@@ -2,22 +2,31 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 def generator_loss(generated_output):
-    return tf.losses.sigmoid_cross_entropy(tf.ones_like(generated_output), generated_output)
+    gen_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(generated_output), generated_output)
+    tf.contrib.summary.scalar("Generator Loss", gen_loss)
+    return gen_loss
 
-def discriminator_loss(real_output, generated_output):
-    real_loss = tf.losses.sigmoid_cross_entropy(tf.ones_like(real_output), real_output)
-    generated_loss = tf.losses.sigmoid_cross_entropy(tf.zeros_like(generated_output), generated_output)
+def discriminator_loss(real_output, generated_output):   
+    with tf.name_scope("Discriminator_Loss") as scope:
+        real_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(real_output), real_output)
+        tf.contrib.summary.scalar("Discriminator Loss (Real)", real_loss)
+        generated_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.zeros_like(generated_output), generated_output)
+        tf.contrib.summary.scalar("Discriminator Loss (Generated)", generated_loss)
 
-    total_loss = real_loss + generated_loss
+        total_loss = real_loss + generated_loss
+        tf.contrib.summary.scalar("Discriminator Loss (Total)", total_loss)
 
     return total_loss
 
-generator_optimizer = tf.train.AdamOptimizer(1e-4)
-discriminator_optimizer = tf.train.AdamOptimizer(1e-4)
+generator_optimizer = tf.compat.v1.train.AdamOptimizer(1e-4)
+discriminator_optimizer = tf.compat.v1.train.AdamOptimizer(1e-4)
 
 noise_dim = 100
 num_examples = 16
 random_vector = tf.random.normal([num_examples, noise_dim])
+
+global_step = tf.compat.v1.train.get_or_create_global_step()
+writer = tf.contrib.summary.create_file_writer('./')
 
 def train_step(images, gen_model, disc_model, batch_size):
     noise = tf.random.normal([batch_size, noise_dim])
@@ -33,21 +42,19 @@ def train_step(images, gen_model, disc_model, batch_size):
     disc_grads = disc_tape.gradient(disc_loss, disc_model.variables)
 
     generator_optimizer.apply_gradients(zip(gen_grads, gen_model.variables))
-    discriminator_optimizer.apply_gradients(zip(disc_grads, disc_model.variables))
+    discriminator_optimizer.apply_gradients(zip(disc_grads, disc_model.variables), global_step=global_step)
 
 train_step = tf.contrib.eager.defun(train_step)
 
 def train_model(gen_model, disc_model, dataset, epochs, batch_size):
-    for epoch in range(epochs):
-        print("Started")
-        i = 1
-        for images in dataset:
-            train_step(images, gen_model, disc_model, batch_size)
-            i = i+1
-        
-        generate_and_save_images(gen_model, epoch+1, random_vector)
+    with writer.as_default(), tf.contrib.summary.always_record_summaries():
+        for epoch in range(epochs): 
+            for images in dataset:
+                train_step(images, gen_model, disc_model, batch_size)
 
-        print("Epoch {} done".format(epoch+1))
+            generate_and_save_images(gen_model, epoch+1, random_vector)
+
+            print("Epoch {} done".format(epoch+1))
 
 def generate_and_save_images(gen_model, epoch, test_input):
     predictions = gen_model(test_input, training=False)
