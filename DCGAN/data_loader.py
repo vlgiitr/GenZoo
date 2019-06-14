@@ -4,6 +4,10 @@ from tensorflow.data import Dataset
 buffer_size = 60000
 
 def load_data(batch_size):
+    '''
+    Returns a nested stucture of tensors based on MNIST database.
+    Will be divided into (60000/batch_size) batches of (batch_size) each.
+    '''
     (images, _), (_, _) = mnist.load_data()
     images = images.reshape(images.shape[0], 28, 28, 1).astype('float32')
     images = (images - 127.5)/127.5

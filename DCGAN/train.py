@@ -6,7 +6,7 @@ def generator_loss(generated_output):
     tf.contrib.summary.scalar("Generator Loss", gen_loss)
     return gen_loss
 
-def discriminator_loss(real_output, generated_output):   
+def discriminator_loss(real_output, generated_output):  
     with tf.name_scope("Discriminator_Loss") as scope:
         real_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(real_output), real_output)
         tf.contrib.summary.scalar("Discriminator Loss (Real)", real_loss)
@@ -56,7 +56,7 @@ def train_model(gen_model, disc_model, dataset, epochs, batch_size):
 
             print("Epoch {} done".format(epoch+1))
 
-def generate_and_save_images(gen_model, epoch, test_input):
+def generate_and_save_images(gen_model, epoch=0, test_input=random_vector):
     predictions = gen_model(test_input, training=False)
 
     fig = plt.figure(figsize=(4,4))
