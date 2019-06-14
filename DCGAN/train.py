@@ -2,15 +2,15 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 def generator_loss(generated_output):
-    gen_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(generated_output), generated_output)
+    gen_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(generated_output), generated_output, label_smoothing=0.2)
     tf.contrib.summary.scalar("Generator Loss", gen_loss)
     return gen_loss
 
 def discriminator_loss(real_output, generated_output):  
     with tf.name_scope("Discriminator_Loss") as scope:
-        real_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(real_output), real_output)
+        real_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(real_output), real_output, label_smoothing=0.2)
         tf.contrib.summary.scalar("Discriminator Loss (Real)", real_loss)
-        generated_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.zeros_like(generated_output), generated_output)
+        generated_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.zeros_like(generated_output), generated_output, label_smoothing=0.2)
         tf.contrib.summary.scalar("Discriminator Loss (Generated)", generated_loss)
 
         total_loss = real_loss + generated_loss
@@ -56,14 +56,27 @@ def train_model(gen_model, disc_model, dataset, epochs, batch_size):
 
             print("Epoch {} done".format(epoch+1))
 
-def generate_and_save_images(gen_model, epoch=0, test_input=random_vector):
+def generate_and_save_images_gray(gen_model, epoch=0, test_input=random_vector):
     predictions = gen_model(test_input, training=False)
 
     fig = plt.figure(figsize=(4,4))
 
     for i in range(predictions.shape[0]):
         plt.subplot(4,4,i+1)
-        plt.imshow(predictions[i,:,:,0]*127.5+127.5, cmap='gray')
+        plt.imshow(predictions[i,:,:,0]*127.5+127.5, cmap = 'gray')
+        plt.axis('off')
+    
+    plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))
+
+def generate_and_save_images(gen_model, epoch=0, test_input=random_vector):
+    predictions = gen_model(test_input, training=False)
+    images = predictions*0.5 + 0.5
+
+    fig = plt.figure(figsize=(4,4))
+
+    for i in range(images.shape[0]):
+        plt.subplot(4,4,i+1)
+        plt.imshow(images[i])
         plt.axis('off')
     
     plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))
