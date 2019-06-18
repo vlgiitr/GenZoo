@@ -68,7 +68,7 @@ def generate_and_save_images_gray(gen_model, epoch=0, test_input=random_vector):
     
     plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))
 
-def generate_and_save_images(gen_model, epoch=0, test_input=random_vector):
+def generate_and_save_images(gen_model, epoch=0, test_input=tf.random.normal([16,100])):
     predictions = gen_model(test_input, training=False)
     images = predictions*0.5 + 0.5
 

@@ -43,11 +43,11 @@ def make_models_mnist():
 
 def make_models_cifar():
     gen_model = Sequential()
-    gen_model.add(Dense(4*4*256, use_bias=False, input_shape=(100,), kernel_initializer='glorot_uniform'))
+    gen_model.add(Dense(4*4*512, use_bias=False, input_shape=(100,), kernel_initializer='glorot_uniform'))
     gen_model.add(BatchNormalization())
     gen_model.add(LeakyReLU())
 
-    gen_model.add(Reshape((4,4,256)))
+    gen_model.add(Reshape((4,4,512)))
     gen_model.add(Conv2DTranspose(256,(5,5), strides=(2,2), padding='same', use_bias=False, kernel_initializer='glorot_uniform'))
     gen_model.add(BatchNormalization())
     gen_model.add(LeakyReLU())
@@ -56,22 +56,18 @@ def make_models_cifar():
     gen_model.add(BatchNormalization())
     gen_model.add(LeakyReLU())
 
-    gen_model.add(Conv2DTranspose(64, (5,5), strides=(2,2), padding='same', use_bias=False, kernel_initializer='glorot_uniform'))
-    gen_model.add(BatchNormalization())
-    gen_model.add(LeakyReLU())
-
-    gen_model.add(Conv2DTranspose(3, (5,5), strides=(1,1), padding='same', use_bias=False, activation='tanh', kernel_initializer='glorot_uniform'))
-
+    gen_model.add(Conv2DTranspose(3, (5,5), strides=(2,2), padding='same', use_bias=False, activation='tanh', kernel_initializer='glorot_uniform'))
+    
     disc_model = Sequential()
-    disc_model.add(Conv2D(64, (5,5), strides=(2,2), padding='same', use_bias=False, kernel_initializer='glorot_uniform'))
-    disc_model.add(LeakyReLU())
-    disc_model.add(Dropout(0.5))
-
     disc_model.add(Conv2D(128, (5,5), strides=(2,2), padding='same', use_bias=False, kernel_initializer='glorot_uniform'))
     disc_model.add(LeakyReLU())
     disc_model.add(Dropout(0.5))
 
     disc_model.add(Conv2D(256, (5,5), strides=(2,2), padding='same', use_bias=False, kernel_initializer='glorot_uniform'))
+    disc_model.add(LeakyReLU())
+    disc_model.add(Dropout(0.5))
+
+    disc_model.add(Conv2D(512, (5,5), strides=(2,2), padding='same', use_bias=False, kernel_initializer='glorot_uniform'))
     disc_model.add(LeakyReLU())
     disc_model.add(Dropout(0.5))
 
