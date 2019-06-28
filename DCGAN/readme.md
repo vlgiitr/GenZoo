@@ -79,11 +79,61 @@ You may setup the repository on your local machine by either downloading it or r
 git clone https://github.com/Atharv24/GenZoo.git
 ```
 
-The trained models are large in size and hence their Google Drive links are provided in the model.txt file.
+The trained models are large in size and hence their Google Drive links are provided in the `model.txt` file.
 
 ### Packages required
 + TensorFlow 1.13
 + Matplotlib 3.1.0
+
+### Training models from scratch
+The `main.py` file contains 2 helper functions `train_mnist_model_from_scratch()` and `train_cifar_model_from_scratch()`
+
+These functions do the following:-
++ Load the required dataset and preprocess it
++ Make the discriminator and generator models
++ Train those models using the batch size and epochs provided as the arguments to the function
++ Return the trained generator and discriminator model
+
+### Loading trained models and generating images
+To load trained models:-
++ Download the trained generator models from the Google Drive link provided in the `model.txt` file
++ Copy the `gen_model.h5` file to root of **DCGAN** folder (preferably)
++ Load the generator model by using `gen_model = tf.keras.models.load_model('gen_model.h5')`
++ Generate images by using `generate_and_save_images(gen_model)`
++ The image will be saved as `sample_image_from_epoch_0000.png` in the folder **generated_images**
+
+### Viewing Loss Graphs
+To view the loss graphs for the models run the following command at the root of **DCGAN** folder:-
+
+```Batchfile
+tensorboard --logdir=loss_graph_logs
+```
+Then goto `localhost:6006` on your browser to view the logs
+
+#### Loss graph for MNIST
+![MNIST_loss](loss_graphs/MNIST_log.png)
+
+#### Loss graph for CIFAR-10
+![CIFAR_loss](loss_graphs/CIFAR_log.png)
+
+## Sample images from the model
+### MNIST
+Images showing the process of training of the model
+
+![MNIST_generated](generated_images/generated_images_sample_image_from_epoch_0001.png)
+![MNIST_generated](generated_images/generated_images_sample_image_from_epoch_0005.png)
+![MNIST_generated](generated_images/generated_images_sample_image_from_epoch_0010.png)
+![MNIST_generated](generated_images/generated_images_sample_image_from_epoch_0030.png)
+![MNIST_generated](generated_images/generated_images_sample_image_from_epoch_0050.png)
+
+### CIFAR-10
+Some sample images from the trained model
+
+![CIFAR_generated](generated_images/cifar_sample_image_(1).png)
+![CIFAR_generated](generated_images/cifar_sample_image_(2).png)
+![CIFAR_generated](generated_images/cifar_sample_image_(3).png)
+![CIFAR_generated](generated_images/cifar_sample_image_(4).png)
+![CIFAR_generated](generated_images/cifar_sample_image_(5).png)
 
 ## Observations
 ### MNIST
