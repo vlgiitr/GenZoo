@@ -108,6 +108,8 @@ To view the loss graphs for the models run the following command at the root of 
 ```Batchfile
 tensorboard --logdir=loss_graph_logs
 ```
+Then goto `localhost:6006` on your browser to view the logs
+
 #### Loss graph for MNIST
 ![MNIST_loss](loss_graphs/MNIST_log.png)
 
