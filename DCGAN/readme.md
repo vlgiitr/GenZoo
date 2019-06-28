@@ -146,7 +146,7 @@ Training on the CIFAR-10 dataset was challenging. The dataset was varied and the
 
 However the main problem faced by me was observing 32x32 images and evaluating if they were 'good enough'. The images are too low-resolution to properly understand the subject but they are easily passable since they look quite similar to the real data.
 
-Some images have noise but most images dont have much artifacts in them. This is party due to the network training on whole 10 labels of the CIFAR-10 dataset. Better results could be obtained by only training the network on one particular label at a time but this takes away the robustness of the model.
+Some images have noise but most images dont have much artifacts in them. This is partly due to the network training on whole 10 labels of the CIFAR-10 dataset. Better results could be obtained by only training the network on one particular label at a time but this takes away the robustness of the model.
 
 ## Credits
 To make this repository I referenced multiple sources:
