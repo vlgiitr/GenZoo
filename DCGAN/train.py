@@ -26,7 +26,7 @@ num_examples = 16
 random_vector = tf.random.normal([num_examples, noise_dim])
 
 global_step = tf.compat.v1.train.get_or_create_global_step()
-writer = tf.contrib.summary.create_file_writer('./')
+writer = tf.contrib.summary.create_file_writer('loss_graph_logs')
 
 def train_step(images, gen_model, disc_model, batch_size):
     noise = tf.random.normal([batch_size, noise_dim])
@@ -73,10 +73,15 @@ def generate_and_save_images(gen_model, epoch=0, test_input=tf.random.normal([16
     images = predictions*0.5 + 0.5
 
     fig = plt.figure(figsize=(4,4))
-
-    for i in range(images.shape[0]):
-        plt.subplot(4,4,i+1)
-        plt.imshow(images[i])
-        plt.axis('off')
+    if (images.shape == (16, 28, 28, 1)):
+        for i in range(images.shape[0]):
+            plt.subplot(4,4,i+1)
+            plt.imshow(images[i, :, :, 0], cmap='gray')
+            plt.axis('off')
+    else:
+        for i in range(images.shape[0]):
+            plt.subplot(4,4,i+1)
+            plt.imshow(images[i])
+            plt.axis('off')
     
     plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))

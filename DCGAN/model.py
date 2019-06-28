@@ -25,7 +25,6 @@ def make_models_mnist():
     gen_model.add(LeakyReLU())
 
     gen_model.add(Conv2DTranspose(1, (5,5), strides=(2,2), padding='same', use_bias=False, activation='tanh'))
-    gen_model.add()
 
     disc_model = Sequential()
     disc_model.add(Conv2D(64, (5, 5), strides=(2, 2), padding='same'))
