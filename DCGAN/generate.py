@@ -36,7 +36,10 @@ images = predictions*0.5 + 0.5
 
 plt.axis('off')
 plt.title('Generated Images')
-plt.imshow(image_grid(images, grid_size))
+if(images.shape[3]==1):
+    plt.imshow(image_grid(images, grid_size)[:, :, 0], cmap='gray')
+else:
+    plt.imshow(image_grid(images, grid_size))
 
 if not os.path.exists(args.save_path):
     os.mkdir(args.save_path)

@@ -116,7 +116,10 @@ def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
 
     plt.axis('off')
     plt.title('Generated Images')
-    plt.imshow(image_grid(images))
+    if(images.shape[3]==1):
+        plt.imshow(image_grid(images)[:, :, 0], cmap='gray')
+    else:
+        plt.imshow(image_grid(images))
 
     plt.savefig(image_save_directory + "/sample_image_from_epoch_{:04d}.png".format(epoch))
     plt.close()
