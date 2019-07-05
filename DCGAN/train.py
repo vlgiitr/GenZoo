@@ -1,17 +1,28 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import configparser
+import argparse
 
 from data_loader import load_data_mnist, load_data_cifar
 from model import make_models_mnist, make_models_cifar
 
-params = {'lr' : 2e-4, 'b1' : 0.5, 'EPOCHS' : 30, 'BATCH_SIZE' : 64}
+parser = argparse.ArgumentParser()
+parser.add_argument('-config', default='default.ini', help='Name of config file stored in configs folder')
+args = parser.parse_args()
 
-lr = params['lr']
-b1 = params['b1']
-EPOCHS = params['EPOCHS']
-BATCH_SIZE = params['BATCH_SIZE']
+path_to_config = 'configs/' + args.config
 
-dataset_in_use = "cifar"
+config = configparser.ConfigParser()
+config.read(path_to_config)
+
+exp_name = config['DEFAULT']['exp_name']
+lr = float(config['DEFAULT']['learning_rate'])
+b1 = float(config['DEFAULT']['beta_1'])
+EPOCHS = int(config['DEFAULT']['epochs'])
+BATCH_SIZE = int(config['DEFAULT']['batch_size'])
+dataset_in_use = config['DEFAULT']['dataset']
+
+exp_path = "experiments/" + exp_name
 
 if(dataset_in_use == "cifar"):
     gen_model, disc_model = make_models_cifar()
@@ -30,11 +41,11 @@ noise_dim = 100
 num_examples = 16
 random_vector = tf.random.normal([num_examples, noise_dim])
 
-logs_path = "loss_graph_logs/" + dataset_in_use
+logs_path = exp_path + "/loss_graph_logs"
 
 writer = tf.summary.create_file_writer(logs_path)
 
-checkpoint_dir = 'training_checkpoints/' + dataset_in_use
+checkpoint_dir = exp_path + 'training_checkpoints/'
 checkpoint_prefix = checkpoint_dir + '/ckpt'
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
@@ -79,14 +90,14 @@ def train_model(dataset, epochs, batch_size):
                 tf.summary.scalar("Discriminator_Loss", disc_loss, step)
             step = step+1
             
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 1 == 0:
             checkpoint.save(file_prefix = checkpoint_prefix)
 
         generate_and_save_images(epoch+1, random_vector)
 
         print("Epoch {} done".format(epoch+1))
 
-image_save_directory = "generated_images/" + dataset_in_use
+image_save_directory = exp_path +  "/generated_images/"
 
 def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
     predictions = gen_model(test_input, training=False)
@@ -104,7 +115,7 @@ def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
             plt.imshow(images[i])
             plt.axis('off')
     
-    plt.savefig(image_save_directory + "/sample_image_from_epoch_{:04d}".format(epoch))
+    plt.savefig(image_save_directory + "sample_image_from_epoch_{:04d}".format(epoch))
 
 
 train_model(dataset, EPOCHS, BATCH_SIZE)

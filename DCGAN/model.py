@@ -1,5 +1,5 @@
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Reshape, LeakyReLU, Dropout, Flatten, Dense, BatchNormalization
+from tensorflow.python.keras.api._v2.keras.models import Sequential
+from tensorflow.python.keras.api._v2.keras.layers import Conv2D, Conv2DTranspose, Reshape, LeakyReLU, Dropout, Flatten, Dense, BatchNormalization
 
 def make_models_mnist():
     '''
