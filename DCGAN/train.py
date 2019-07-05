@@ -1,34 +1,58 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-def generator_loss(generated_output):
-    gen_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(generated_output), generated_output, label_smoothing=0.2)
-    tf.contrib.summary.scalar("Generator Loss", gen_loss)
-    return gen_loss
+from data_loader import load_data_mnist, load_data_cifar
+from model import make_models_mnist, make_models_cifar
 
-def discriminator_loss(real_output, generated_output):  
-    with tf.name_scope("Discriminator_Loss") as scope:
-        real_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.ones_like(real_output), real_output, label_smoothing=0.2)
-        tf.contrib.summary.scalar("Discriminator Loss (Real)", real_loss)
-        generated_loss = tf.compat.v1.losses.sigmoid_cross_entropy(tf.zeros_like(generated_output), generated_output, label_smoothing=0.2)
-        tf.contrib.summary.scalar("Discriminator Loss (Generated)", generated_loss)
+params = {'lr' : 2e-4, 'b1' : 0.5, 'EPOCHS' : 30, 'BATCH_SIZE' : 64}
 
-        total_loss = real_loss + generated_loss
-        tf.contrib.summary.scalar("Discriminator Loss (Total)", total_loss)
+lr = params['lr']
+b1 = params['b1']
+EPOCHS = params['EPOCHS']
+BATCH_SIZE = params['BATCH_SIZE']
 
-    return total_loss
+dataset_in_use = "cifar"
 
-generator_optimizer = tf.compat.v1.train.AdamOptimizer(1e-4)
-discriminator_optimizer = tf.compat.v1.train.AdamOptimizer(1e-4)
+if(dataset_in_use == "cifar"):
+    gen_model, disc_model = make_models_cifar()
+    dataset = load_data_cifar(BATCH_SIZE)
+    
+elif(dataset_in_use == "mnist"):
+    gen_model, disc_model = make_models_mnist()
+    dataset = load_data_mnist(BATCH_SIZE)
+
+cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True, label_smoothing=0.2)
+
+generator_optimizer = tf.keras.optimizers.Adam(learning_rate = lr, beta_1 = b1)
+discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate = lr, beta_1 = b1)
 
 noise_dim = 100
 num_examples = 16
 random_vector = tf.random.normal([num_examples, noise_dim])
 
-global_step = tf.compat.v1.train.get_or_create_global_step()
-writer = tf.contrib.summary.create_file_writer('loss_graph_logs')
+logs_path = "loss_graph_logs/" + dataset_in_use
 
-def train_step(images, gen_model, disc_model, batch_size):
+writer = tf.summary.create_file_writer(logs_path)
+
+checkpoint_dir = 'training_checkpoints/' + dataset_in_use
+checkpoint_prefix = checkpoint_dir + '/ckpt'
+checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
+                                 discriminator_optimizer=discriminator_optimizer,
+                                 generator=gen_model,
+                                 discriminator=disc_model)
+
+def generator_loss(generated_output):
+    return cross_entropy(tf.zeros_like(generated_output), generated_output)
+
+def discriminator_loss(real_output, generated_output):  
+    real_loss = cross_entropy(tf.zeros_like(real_output), real_output)
+    generated_loss = cross_entropy(tf.ones_like(generated_output), generated_output)
+
+    total_loss = real_loss + generated_loss
+    return total_loss
+
+@tf.function
+def train_step(images, batch_size):
     noise = tf.random.normal([batch_size, noise_dim])
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
@@ -38,37 +62,33 @@ def train_step(images, gen_model, disc_model, batch_size):
         gen_loss = generator_loss(generated_output)
         disc_loss = discriminator_loss(real_output, generated_output)
 
-    gen_grads = gen_tape.gradient(gen_loss, gen_model.variables)
-    disc_grads = disc_tape.gradient(disc_loss, disc_model.variables)
+    gen_grads = gen_tape.gradient(gen_loss, gen_model.trainable_variables)
+    disc_grads = disc_tape.gradient(disc_loss, disc_model.trainable_variables)
 
-    generator_optimizer.apply_gradients(zip(gen_grads, gen_model.variables))
-    discriminator_optimizer.apply_gradients(zip(disc_grads, disc_model.variables), global_step=global_step)
+    generator_optimizer.apply_gradients(zip(gen_grads, gen_model.trainable_variables))
+    discriminator_optimizer.apply_gradients(zip(disc_grads, disc_model.trainable_variables))
+    return gen_loss, disc_loss
 
-train_step = tf.contrib.eager.defun(train_step)
+def train_model(dataset, epochs, batch_size):
+    step = 0
+    for epoch in range(epochs): 
+        for images in dataset:
+            gen_loss, disc_loss = train_step(images, batch_size)
+            with writer.as_default():
+                tf.summary.scalar("Generator_Loss", gen_loss, step)
+                tf.summary.scalar("Discriminator_Loss", disc_loss, step)
+            step = step+1
+            
+        if (epoch + 1) % 10 == 0:
+            checkpoint.save(file_prefix = checkpoint_prefix)
 
-def train_model(gen_model, disc_model, dataset, epochs, batch_size):
-    with writer.as_default(), tf.contrib.summary.always_record_summaries():
-        for epoch in range(epochs): 
-            for images in dataset:
-                train_step(images, gen_model, disc_model, batch_size)
+        generate_and_save_images(epoch+1, random_vector)
 
-            generate_and_save_images(gen_model, epoch+1, random_vector)
+        print("Epoch {} done".format(epoch+1))
 
-            print("Epoch {} done".format(epoch+1))
+image_save_directory = "generated_images/" + dataset_in_use
 
-def generate_and_save_images_gray(gen_model, epoch=0, test_input=random_vector):
-    predictions = gen_model(test_input, training=False)
-
-    fig = plt.figure(figsize=(4,4))
-
-    for i in range(predictions.shape[0]):
-        plt.subplot(4,4,i+1)
-        plt.imshow(predictions[i,:,:,0]*127.5+127.5, cmap = 'gray')
-        plt.axis('off')
-    
-    plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))
-
-def generate_and_save_images(gen_model, epoch=0, test_input=tf.random.normal([16,100])):
+def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
     predictions = gen_model(test_input, training=False)
     images = predictions*0.5 + 0.5
 
@@ -84,4 +104,7 @@ def generate_and_save_images(gen_model, epoch=0, test_input=tf.random.normal([16
             plt.imshow(images[i])
             plt.axis('off')
     
-    plt.savefig('generated_images\sample_image_from_epoch_{:04d}'.format(epoch))
+    plt.savefig(image_save_directory + "/sample_image_from_epoch_{:04d}".format(epoch))
+
+
+train_model(dataset, EPOCHS, BATCH_SIZE)
