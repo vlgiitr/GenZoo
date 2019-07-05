@@ -2,6 +2,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import configparser
 import argparse
+from os import mkdir
 
 from data_loader import load_data_mnist, load_data_cifar
 from model import make_models_mnist, make_models_cifar
@@ -10,7 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-config', default='default.ini', help='Name of config file stored in configs folder')
 args = parser.parse_args()
 
-path_to_config = 'configs/' + args.config
+path_to_config = args.config
 
 config = configparser.ConfigParser()
 config.read(path_to_config)
@@ -45,7 +46,7 @@ logs_path = exp_path + "/loss_graph_logs"
 
 writer = tf.summary.create_file_writer(logs_path)
 
-checkpoint_dir = exp_path + 'training_checkpoints/'
+checkpoint_dir = exp_path + '/training_checkpoints/'
 checkpoint_prefix = checkpoint_dir + '/ckpt'
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
@@ -90,14 +91,15 @@ def train_model(dataset, epochs, batch_size):
                 tf.summary.scalar("Discriminator_Loss", disc_loss, step)
             step = step+1
             
-        if (epoch + 1) % 1 == 0:
+        if (epoch + 1) % 10 == 0:
             checkpoint.save(file_prefix = checkpoint_prefix)
 
         generate_and_save_images(epoch+1, random_vector)
 
         print("Epoch {} done".format(epoch+1))
 
-image_save_directory = exp_path +  "/generated_images/"
+image_save_directory = exp_path +  "/generated_images"
+mkdir(image_save_directory)
 
 def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
     predictions = gen_model(test_input, training=False)
@@ -114,8 +116,9 @@ def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
             plt.subplot(4,4,i+1)
             plt.imshow(images[i])
             plt.axis('off')
-    
-    plt.savefig(image_save_directory + "sample_image_from_epoch_{:04d}".format(epoch))
+
+    plt.savefig(image_save_directory + "/sample_image_from_epoch_{:04d}.png".format(epoch))
+    plt.close()
 
 
 train_model(dataset, EPOCHS, BATCH_SIZE)
