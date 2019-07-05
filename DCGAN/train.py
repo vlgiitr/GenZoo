@@ -2,6 +2,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import configparser
 import argparse
+import os
 from os import mkdir
 
 from data_loader import load_data_mnist, load_data_cifar
@@ -99,7 +100,8 @@ def train_model(dataset, epochs, batch_size):
         print("Epoch {} done".format(epoch+1))
 
 image_save_directory = exp_path +  "/generated_images"
-mkdir(image_save_directory)
+if not os.path.exists(image_save_directory):
+    mkdir(image_save_directory)
 
 def image_grid(x, size=4):
     t = tf.unstack(x[:size * size], num=size*size, axis=0)
