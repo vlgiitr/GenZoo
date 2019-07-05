@@ -101,21 +101,20 @@ def train_model(dataset, epochs, batch_size):
 image_save_directory = exp_path +  "/generated_images"
 mkdir(image_save_directory)
 
+def image_grid(x, size=4):
+    t = tf.unstack(x[:size * size], num=size*size, axis=0)
+    rows = [tf.concat(t[i*size:(i+1)*size], axis=0) 
+            for i in range(size)]
+    image = tf.concat(rows, axis=1)
+    return image
+
 def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
     predictions = gen_model(test_input, training=False)
     images = predictions*0.5 + 0.5
 
-    fig = plt.figure(figsize=(4,4))
-    if (images.shape == (16, 28, 28, 1)):
-        for i in range(images.shape[0]):
-            plt.subplot(4,4,i+1)
-            plt.imshow(images[i, :, :, 0], cmap='gray')
-            plt.axis('off')
-    else:
-        for i in range(images.shape[0]):
-            plt.subplot(4,4,i+1)
-            plt.imshow(images[i])
-            plt.axis('off')
+    plt.axis('off')
+    plt.title('Generated Images')
+    plt.imshow(image_grid(images))
 
     plt.savefig(image_save_directory + "/sample_image_from_epoch_{:04d}.png".format(epoch))
     plt.close()
