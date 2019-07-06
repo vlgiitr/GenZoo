@@ -1,4 +1,3 @@
-Generative model trained on MNIST dataset for 50 epochs:-
-https://drive.google.com/open?id=1RBCQdLfd0rgHfwwPNQWKfwnjxKH7K03e
-Generative model trained on CIFAR-10 dataset for 150 epochs:-
-https://drive.google.com/open?id=1NW27alGGMHm_gs3Z6JS5PH_SLXAFp3Ax
+zip file containing models trained on MNIST and CIFAR-10 datasets
+https://drive.google.com/open?id=1STq9CJzZYMCO5-da0qozazD-YJcJRFZw <--- MNIST
+https://drive.google.com/open?id=1s4iFzWTxcZqr22U4tj8_hOUULQsjsX19 <--- CIFAR-10
