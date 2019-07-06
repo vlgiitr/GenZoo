@@ -33,7 +33,7 @@ def image_grid(x, size):
 test_vector = tf.random.normal([grid_size*grid_size, 100])
 predictions = gen_model(test_vector, training=False)
 images = predictions*0.5 + 0.5
-
+plt.figure(figsize=(grid_size, grid_size), dpi=100)
 plt.axis('off')
 plt.title('Generated Images')
 if(images.shape[3]==1):
