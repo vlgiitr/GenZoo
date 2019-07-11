@@ -98,6 +98,7 @@ def train_model(dataset, epochs, batch_size):
             
         if (epoch + 1) % model_save_frequency == 0:
             checkpoint.save(file_prefix = checkpoint_prefix)
+            print("Checkpoint saved for epoch :{}".format(epoch+1))
 
         predictions=gen_model(random_vector, training=False)
         images=predictions*0.5 + 0.5
