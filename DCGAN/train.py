@@ -17,12 +17,15 @@ path_to_config = args.config
 config = configparser.ConfigParser()
 config.read(path_to_config)
 
-exp_name = config['DEFAULT']['exp_name']
-lr = float(config['DEFAULT']['learning_rate'])
-b1 = float(config['DEFAULT']['beta_1'])
-EPOCHS = int(config['DEFAULT']['epochs'])
-BATCH_SIZE = int(config['DEFAULT']['batch_size'])
-dataset_in_use = config['DEFAULT']['dataset']
+exp_name = config['MODEL_VARIABLES']['exp_name']
+lr = float(config['MODEL_PARAMETERS']['learning_rate'])
+b1 = float(config['MODEL_PARAMETERS']['beta_1'])
+EPOCHS = int(config['MODEL_PARAMETERS']['epochs'])
+BATCH_SIZE = int(config['MODEL_PARAMETERS']['batch_size'])
+dataset_in_use = config['MODEL_VARIABLES']['dataset']
+log_frequency = int(config['SAVE_PARAMETERS']['log_frequency'])
+model_save_frequency= int(config['SAVE_PARAMETERS']['model_save_frequency'])
+grid_size=int(config['SAVE_PARAMETERS']['grid_size'])
 
 exp_path = "experiments/" + exp_name
 
@@ -40,7 +43,7 @@ generator_optimizer = tf.keras.optimizers.Adam(learning_rate = lr, beta_1 = b1)
 discriminator_optimizer = tf.keras.optimizers.Adam(learning_rate = lr, beta_1 = b1)
 
 noise_dim = 100
-num_examples = 16
+num_examples = grid_size*grid_size
 random_vector = tf.random.normal([num_examples, noise_dim])
 
 logs_path = exp_path + "/loss_graph_logs"
@@ -84,18 +87,23 @@ def train_step(images, batch_size):
 
 def train_model(dataset, epochs, batch_size):
     step = 0
-    for epoch in range(epochs): 
+    for epoch in range(epochs):
         for images in dataset:
             gen_loss, disc_loss = train_step(images, batch_size)
-            with writer.as_default():
-                tf.summary.scalar("Generator_Loss", gen_loss, step)
-                tf.summary.scalar("Discriminator_Loss", disc_loss, step)
+            if (step+1) % log_frequency == 0:
+                with writer.as_default():
+                    tf.summary.scalar("Generator_Loss", gen_loss, step)
+                    tf.summary.scalar("Discriminator_Loss", disc_loss, step)
             step = step+1
             
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % model_save_frequency == 0:
             checkpoint.save(file_prefix = checkpoint_prefix)
 
-        generate_and_save_images(epoch+1, random_vector)
+        predictions=gen_model(random_vector, training=False)
+        images=predictions*0.5 + 0.5
+        generate_and_save_images(epoch+1, images)
+        with writer.as_default():
+            tf.summary.image("Generated images", images, step, max_outputs=num_examples)
 
         print("Epoch {} done".format(epoch+1))
 
@@ -103,17 +111,14 @@ image_save_directory = exp_path +  "/generated_images"
 if not os.path.exists(image_save_directory):
     mkdir(image_save_directory)
 
-def image_grid(x, size=4):
+def image_grid(x, size=grid_size):
     t = tf.unstack(x[:size * size], num=size*size, axis=0)
     rows = [tf.concat(t[i*size:(i+1)*size], axis=0) 
             for i in range(size)]
     image = tf.concat(rows, axis=1)
     return image
 
-def generate_and_save_images(epoch=0, test_input=tf.random.normal([16,100])):
-    predictions = gen_model(test_input, training=False)
-    images = predictions*0.5 + 0.5
-
+def generate_and_save_images(epoch, images):
     plt.axis('off')
     plt.title('Generated Images')
     if(images.shape[3]==1):
