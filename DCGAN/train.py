@@ -1,9 +1,14 @@
+import logging
+import os
+from os import mkdir
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import webbrowser
+
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import configparser
 import argparse
-import os
-from os import mkdir
+from tensorboard import program
 
 from data_loader import load_data_mnist, load_data_cifar
 from model import make_models_mnist, make_models_cifar
@@ -130,5 +135,10 @@ def generate_and_save_images(epoch, images):
     plt.savefig(image_save_directory + "/sample_image_from_epoch_{:04d}.png".format(epoch))
     plt.close()
 
-
+log = logging.getLogger('werkzeug').setLevel(logging.ERROR)
+tb = program.TensorBoard()
+tb.configure(argv=[None, '--logdir', logs_path])
+url = tb.launch()
+print('TensorBoard at {}'.format(url))
+webbrowser.open('http://localhost:6006')
 train_model(dataset, EPOCHS, BATCH_SIZE)
