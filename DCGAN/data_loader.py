@@ -29,3 +29,4 @@ def load_data_cifar(batch_size):
     dataset = Dataset.from_tensor_slices(images).shuffle(buffer_size_cifar).batch(batch_size, drop_remainder = True)
     
     return dataset
+    

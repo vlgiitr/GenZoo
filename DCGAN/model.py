@@ -74,3 +74,4 @@ def make_models_cifar():
     disc_model.add(Dense(1))
 
     return gen_model, disc_model
+    
