@@ -3,6 +3,7 @@ import os
 from os import mkdir
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import webbrowser
+from datetime import datetime
 
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -56,7 +57,6 @@ logs_path = exp_path + "/loss_graph_logs"
 writer = tf.summary.create_file_writer(logs_path)
 
 checkpoint_dir = exp_path + '/training_checkpoints/'
-checkpoint_prefix = checkpoint_dir + '/ckpt'
 checkpoint = tf.train.Checkpoint(generator_optimizer=generator_optimizer,
                                  discriminator_optimizer=discriminator_optimizer,
                                  generator=gen_model,
@@ -102,8 +102,10 @@ def train_model(dataset, epochs, batch_size):
             step = step+1
             
         if (epoch + 1) % model_save_frequency == 0:
-            checkpoint.save(file_prefix = checkpoint_prefix)
-            print("Checkpoint saved for epoch :{}".format(epoch+1))
+            current_time_as_string = f"{datetime.now():%Y-%m-%d_%H:%M:%S}"
+            checkpoint_name = checkpoint_dir + current_time_as_string
+            checkpoint.write(file_prefix = checkpoint_name)
+            print("Checkpoint saved :{}".format(checkpoint_name))
 
         predictions=gen_model(random_vector, training=False)
         images=predictions*0.5 + 0.5
