@@ -23,7 +23,7 @@ elif(args.dataset == 'cifar'):
     gen_model, _ = make_models_cifar()
 
 ckpt = tf.train.Checkpoint(generator=gen_model)
-ckpt.restore(tf.train.latest_checkpoint(args.load_path))
+ckpt.restore(args.load_path)
 
 def image_grid(x, size):
     t = tf.unstack(x[:size * size], num=size*size, axis=0)
