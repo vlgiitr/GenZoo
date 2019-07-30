@@ -14,9 +14,9 @@ GANs are generally made up of two models: The Artist (Generator) and The Critic 
 4. [Model Architecture](#4-model-architecture)
 5. [Repository Overview](#5-repository-overview)
 6. [Results Obtained](#6-results-obtained)
-    1. [Generated Images](#a-generated-images)
-    2. [Parameters Used](#b-parameters-used)
-    3. [Loss Curves](#c-loss-curves)
+    1. [Generated Images](#i-generated-images)
+    2. [Parameters Used](#ii-parameters-used)
+    3. [Loss Curves](#iii-loss-curves)
 7. [Observations](#7-observations)
 8. [Credits](#8-credits)
 
@@ -52,13 +52,13 @@ python train.py -config path/to/config.ini
 To generated images from trained models, run
 
 ```Batchfile
-python generate.py -dataset mnist/cifar -load_path path/to/directory/containing/checkpoint -grid_size n -save_path directory/where/images/are/saved
+python generate.py -dataset mnist/cifar -load_path path/to/checkpoint -grid_size n -save_path directory/where/images/are/saved
 ```
 
 The arguments used are explained as follows
 
 + `-dataset` requires either `mnist` or `cifar` according to what dataset the model was trained on.
-+ `-load_path` requires the path to the training checkpoint to load.
++ `-load_path` requires the path to the training checkpoint to load. Point this towards the *.index file without the extension. For example `-load_path training_checkpoints/ckpt-1`.
 + `-grid_size` requires integer `n` and will generate n*n images in a grid.
 + `-save_path` requires the path to the directory where the generated images will be saved. If the directory doesn't exist, the script will create it.
 
@@ -97,22 +97,22 @@ This repository contains the following files and folders
 9. `train.py`: Contains code to train models from scratch.
 
 ## 6. Results Obtained
-### a. Generated Images
+### i. Generated Images
 Image generated after training model for 30 epochs on MNIST.
 ![mnist_generated](resources/generated_image_mnist.png)
 
 Image generated after training model for 100 epochs on CIFAR-10.
 ![cifar_generated](resources/generated_image_cifar.png)
 
-### b. Parameters Used
+### ii. Parameters Used
 + Optimizer used is Adam
 + Learning rate 0.0002, beta-1 0.5
-+ Trained for 30 epochs(MNIST) and 100 epochs(CIFAR-10)
-+ Batch size 32(MNIST) and 128(CIFAR-10)
++ Trained for 30 epochs (MNIST) and 100 epochs (CIFAR-10)
++ Batch size 32 (MNIST) and 128 (CIFAR-10)
 + The model uses label flipping (i.e. real images are assigned 0 and fake images are assigned 1)
 + Label smoothing is also used
 
-### c. Loss Curves
+### iii. Loss Curves
 #### MNIST
 <img src="resources/mnist_gen_loss.png" width=410><img src="resources/mnist_disc_loss.png" width=410>
 
@@ -134,7 +134,7 @@ Some images have noise but most images dont have much artifacts in them. This is
 
 ## 8. Credits
 To make this repository I referenced multiple sources:
-+ Generative Adversarial Networks — Goodfellow et al. (2014)
-+ DCGANs — Radford et al. (2015)
-+ MIT intro to deep learning (2019) - Lecture 4
-+ TensorFlow DCGAN tutorial
++ [Generative Adversarial Networks — Goodfellow et al. (2014)](https://arxiv.org/abs/1406.2661)
++ [DCGANs — Radford et al. (2015)](https://arxiv.org/abs/1511.06434)
++ [MIT intro to deep learning (2019) - Lecture 4](https://www.youtube.com/watch?v=yFBFl1cLYx8)
++ [TensorFlow DCGAN tutorial](https://www.tensorflow.org/beta/tutorials/generative/dcgan)
