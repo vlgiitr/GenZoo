@@ -6,7 +6,11 @@ import webbrowser
 from datetime import datetime
 
 import tensorflow as tf
+
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 import configparser
 import argparse
 from tensorboard import program
@@ -15,7 +19,7 @@ from data_loader import load_data_mnist, load_data_cifar
 from model import make_models_mnist, make_models_cifar
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-config', default='default.ini', help='Name of config file stored in configs folder')
+parser.add_argument('-config', default='default_mnist.ini', help='Name of config file stored in configs folder')
 args = parser.parse_args()
 
 path_to_config = args.config
@@ -103,7 +107,7 @@ def train_model(dataset, epochs, batch_size):
             
         if (epoch + 1) % model_save_frequency == 0:
             current_time_as_string = f"{datetime.now():%Y-%m-%d_%H:%M:%S}"
-            checkpoint_name = checkpoint_dir + current_time_as_string
+            checkpoint_name = checkpoint_dir + "ckpt_epoch_" + str(epoch + 1)
             checkpoint.write(file_prefix = checkpoint_name)
             print("Checkpoint saved :{}".format(checkpoint_name))
 
