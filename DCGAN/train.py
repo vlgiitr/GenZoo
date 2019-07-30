@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 
 import configparser
 import argparse
+from tqdm import tqdm
+
 from tensorboard import program
 
 from data_loader import load_data_mnist, load_data_cifar
@@ -41,11 +43,11 @@ exp_path = "experiments/" + exp_name
 
 if(dataset_in_use == "cifar"):
     gen_model, disc_model = make_models_cifar()
-    dataset = load_data_cifar(BATCH_SIZE)
+    dataset, num_batches = load_data_cifar(BATCH_SIZE)
     
 elif(dataset_in_use == "mnist"):
     gen_model, disc_model = make_models_mnist()
-    dataset = load_data_mnist(BATCH_SIZE)
+    dataset, num_batches = load_data_mnist(BATCH_SIZE)
 
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True, label_smoothing=0.2)
 
@@ -97,6 +99,7 @@ def train_step(images, batch_size):
 def train_model(dataset, epochs, batch_size):
     step = 0
     for epoch in range(epochs):
+        pbar = tqdm(total=num_batches, unit='batch', ncols=80, desc='Epoch {}: '.format(epoch+1))
         for images in dataset:
             gen_loss, disc_loss = train_step(images, batch_size)
             if (step+1) % log_frequency == 0:
@@ -104,7 +107,10 @@ def train_model(dataset, epochs, batch_size):
                     tf.summary.scalar("Generator_Loss", gen_loss, step)
                     tf.summary.scalar("Discriminator_Loss", disc_loss, step)
             step = step+1
+            pbar.update(1)
             
+        pbar.close()
+
         if (epoch + 1) % model_save_frequency == 0:
             current_time_as_string = f"{datetime.now():%Y-%m-%d_%H:%M:%S}"
             checkpoint_name = checkpoint_dir + "ckpt_epoch_" + str(epoch + 1)
@@ -116,8 +122,6 @@ def train_model(dataset, epochs, batch_size):
         generate_and_save_images(epoch+1, images)
         with writer.as_default():
             tf.summary.image("Generated images", images, step, max_outputs=num_examples)
-
-        print("Epoch {} done".format(epoch+1))
 
 image_save_directory = exp_path +  "/generated_images"
 if not os.path.exists(image_save_directory):
