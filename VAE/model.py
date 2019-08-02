@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+__name__ = "model.py"
+
 
 class VAE(nn.Module):
     def __init__(self, z_dim=20, keep_prob=0.2):
@@ -14,11 +16,11 @@ class VAE(nn.Module):
         self.fc3 = nn.Linear(z_dim, 256)
         self.fc4 = nn.Linear(256, 512)
         self.fc5 = nn.Linear(512, 784)
-        self.decode = nn.Sequential(nn.ConvTranspose2d(16, 16, 3, padding=1),
-                                    nn.BatchNorm2d(16),
-                                    nn.ConvTranspose2d(16, 3, 8),
+        self.decode = nn.Sequential(nn.ConvTranspose2d(16, 10, 3, padding=1),
+                                    nn.BatchNorm2d(10),
+                                    nn.ConvTranspose2d(10, 5, 8),
                                     nn.BatchNorm2d(3),
-                                    nn.ConvTranspose2d(3, 1, 15))
+                                    nn.ConvTranspose2d(5, 1, 15))
 
         self.mean = nn.Linear(256, z_dim)
         self.logvar = nn.Linear(256, z_dim)
@@ -37,13 +39,29 @@ class VAE(nn.Module):
         return mean, logvar
 
     def reparameterize(self, mean, logvar):
-        std = logvar.mul(0.5).exp_()
-        eps = torch.randn_like(std)
-        return mean + eps * std
+        if self.training:
+            std = logvar.mul(0.5).exp_()
+            eps = torch.randn_like(std)
+            return mean + eps * std
+        else:
+            return mean
 
     def decoder(self, z):
         z = self.fc3(z)
         z = self.fc4(z)
         z = self.fc5(z)
         z = z.view([-1, 16, 7, 7])
+        z = self.decode(z)
+        z = F.sigmoid(z)
+        return z
 
+    def forward(self, x):
+        mean, logvar = self.encoder(x)
+        z = self.reparameterize(mean, logvar)
+        x_output = self.decoder(z)
+        return x_output, mean, logvar
+
+
+def make_model():
+    model = VAE()
+    return model
