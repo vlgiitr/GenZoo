@@ -6,7 +6,7 @@ buffer_size_cifar = 50000
 
 def load_data_mnist(batch_size):
     '''
-    Returns a nested stucture of tensors based on MNIST database.
+    Returns a nested structure of tensors based on MNIST database.
     Will be divided into (60000/batch_size) batches of (batch_size) each.
     '''
     (images, _), (_, _) = mnist.load_data()
@@ -23,7 +23,7 @@ def load_data_mnist(batch_size):
 
 def load_data_cifar(batch_size):
     '''
-    Returns a nested stucture of tensors based on CIFAR-10 database.
+    Returns a nested structure of tensors based on CIFAR-10 database.
     Will be divided into (50000/batch_size) batches of (batch_size) each.
     '''
     (images, _), (_, _) = cifar10.load_data()

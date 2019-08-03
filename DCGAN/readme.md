@@ -68,7 +68,7 @@ To generate images from pre-trained models, download checkpoint files from the G
 ### Generator Model
 ![generator_image](resources/generator.png)
 + Each Dense and Conv2DTranspose layer is accompanied by LeakyReLU and BatchNorm layer, except the last layer, which has TanH activation.
-+ Input is 100-dimensional noise. It is repeatedly upsampled to produce either 28x28x1(MNIST) or 32x32x3(CIFAR-10) image.
++ Input is a 100-dimensional noise. It is repeatedly upsampled to produce either a 28x28x1 (MNIST) or 32x32x3 (CIFAR-10) image.
 
 ### Discriminator Model
 ![discriminator_image](resources/discriminator.png)
@@ -98,17 +98,17 @@ This repository contains the following files and folders
 
 ## 6. Results Obtained
 ### i. Generated Images
-Image generated after training model for 30 epochs on MNIST.
+Samples generated after training model for 30 epochs on MNIST.
 ![mnist_generated](resources/generated_image_mnist.png)
 
-Image generated after training model for 100 epochs on CIFAR-10.
+Samples generated after training model for 100 epochs on CIFAR-10.
 ![cifar_generated](resources/generated_image_cifar.png)
 
 ### ii. Parameters Used
 + Optimizer used is Adam
 + Learning rate 0.0002, beta-1 0.5
 + Trained for 30 epochs (MNIST) and 100 epochs (CIFAR-10)
-+ Batch size 32 (MNIST) and 128 (CIFAR-10)
++ Batch size is 32 (MNIST) and 128 (CIFAR-10)
 + The model uses label flipping (i.e. real images are assigned 0 and fake images are assigned 1)
 + Label smoothing is also used
 
@@ -126,11 +126,11 @@ The model takes only 30 epochs to train which happens in under 6 mins in Google 
 Training for long duration (100+ epochs) does not seem to improve the model's performance and sometimes even deteriorates the quality of the images produced.
 
 ### CIFAR-10
-Training on the CIFAR-10 dataset was challenging. The dataset was varied and the network has a higher number of parameters to train. This resulted in training times of upto 1.5 min/epoch on Google Colab. The model was trained for 200 epochs and produced images which were similar to the dataset.
+Training on the CIFAR-10 dataset was challenging. The dataset was varied and the network has a higher number of parameters to train. This resulted in training times of upto 1.5 min/epoch on Google Colab. The model was trained for 100 epochs and produced images which were similar to the dataset.
 
 However the main problem faced by me was observing 32x32 images and evaluating if they were 'good enough'. The images are too low-resolution to properly understand the subject but they are easily passable since they look quite similar to the real data.
 
-Some images have noise but most images dont have much artifacts in them. This is partly due to the network training on whole 10 labels of the CIFAR-10 dataset. Better results could be obtained by only training the network on one particular label at a time but this takes away the robustness of the model.
+Some images have noise but most images don't have much artifacts in them. This is partly due to the network training on all of the 10 labels of the CIFAR-10 dataset. Better results could be obtained by only training the network on one particular label at a time but this takes away the robustness of the model.
 
 ## 8. Credits
 To make this repository I referenced multiple sources:
