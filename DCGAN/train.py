@@ -29,6 +29,7 @@ path_to_config = args.config
 config = configparser.ConfigParser()
 config.read(path_to_config)
 
+gpu = config['MODEL_VARIABLES']['gpu']
 exp_name = config['MODEL_VARIABLES']['exp_name']
 lr = float(config['MODEL_PARAMETERS']['learning_rate'])
 b1 = float(config['MODEL_PARAMETERS']['beta_1'])
@@ -38,6 +39,17 @@ dataset_in_use = config['MODEL_VARIABLES']['dataset']
 log_frequency = int(config['SAVE_PARAMETERS']['log_frequency'])
 model_save_frequency= int(config['SAVE_PARAMETERS']['model_save_frequency'])
 grid_size=int(config['SAVE_PARAMETERS']['grid_size'])
+
+os.environ["CUDA_VISIBLE_DEVICES"]= gpu
+
+if tf.test.gpu_device_name():
+    print('Using GPU Device: {}'.format(tf.test.gpu_device_name()))
+else:
+    if int(gpu) >= 0:
+        print("Check if GPU device is available or if tensorflow-gpu version is installed")
+    else:
+        print("Running on CPU")
+
 
 exp_path = "experiments/" + exp_name
 
