@@ -37,6 +37,13 @@ All dependencies required by this repo can be downloaded by creating a virtual e
 pip install -r requirements.txt
 ```
 
+Make sure to have CUDA 10.0.130 and cuDNN 7.6.0 installed in the virtual environment.  For a conda environment, this can be done by using the following commands:
+
+```Batchfile
+conda install cudatoolkit=10.0
+conda install cudnn=7.6.0
+```
+
 ## 2. Training Model from Scratch
 To train your own model from scratch, run
 

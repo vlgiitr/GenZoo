@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-dataset', help='Dataset to generate image from (MNIST/CIFAR)')
 parser.add_argument('-load_path', help='Directory of checkpoint to load')
 parser.add_argument('-grid_size', help='Grid size for generating images. Will generate grid_size*grid_size images')
-parser.add_argument('-save_path' ,help='Path for saving image')
+parser.add_argument('-save_path', help='Path for saving image')
 args = parser.parse_args()
 
 grid_size = int(args.grid_size)
