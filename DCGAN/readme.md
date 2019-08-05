@@ -24,7 +24,7 @@ GANs are generally made up of two models: The Artist (Generator) and The Critic 
 You may setup the repository on your local machine by either downloading it or running the following line on `cmd prompt`.
 
 ``` Batchfile
-git clone https://github.com/Atharv24/GenZoo.git
+git clone https://github.com/vlgiitr/GenZoo.git
 ```
 
 The trained models are large in size and hence their Google Drive links are provided in the `model.txt` file.
