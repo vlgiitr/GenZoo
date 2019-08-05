@@ -44,6 +44,6 @@ else:
     plt.imshow(image_grid(images, grid_size))
 
 if not os.path.exists(args.save_path):
-    os.mkdir(args.save_path)
+    os.makedirs(args.save_path)
 plt.savefig(args.save_path+'/generated_image_{}.png'.format(args.dataset))
 plt.show()
