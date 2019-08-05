@@ -66,4 +66,3 @@ Refer to the following links to learn to train your model on [Google Colab](http
 
 - https://medium.com/tensorflow/colab-an-easy-way-to-learn-and-use-tensorflow-d74d1686e309
 - https://colab.research.google.com/notebooks/gpu.ipynb
-
