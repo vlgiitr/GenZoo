@@ -21,7 +21,7 @@ from data_loader import load_data_mnist, load_data_cifar
 from model import make_models_mnist, make_models_cifar
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-config', default='default_mnist.ini', help='Name of config file stored in configs folder')
+parser.add_argument('-config', default='./configs/default_mnist.ini', help='Name of config file stored in configs folder')
 args = parser.parse_args()
 
 path_to_config = args.config
