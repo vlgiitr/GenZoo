@@ -111,7 +111,7 @@ def train_step(images, batch_size):
 def train_model(dataset, epochs, batch_size):
     step = 0
     for epoch in range(epochs):
-        pbar = tqdm(total=num_batches, unit='batch', ncols=80, desc='Epoch {}: '.format(epoch+1))
+        pbar = tqdm(total=num_batches, unit='batch', ncols=80, desc=f'Epoch {epoch+1}/{EPOCHS}: ')
         for images in dataset:
             gen_loss, disc_loss = train_step(images, batch_size)
             if (step+1) % log_frequency == 0:
