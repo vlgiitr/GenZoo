@@ -31,7 +31,7 @@ The trained models are large in size and hence their Google Drive links are prov
 
 The data required for training is automatically downloaded when running `train.py`.
 
-All dependencies required by this repo can be downloaded by creating a virtual environment with Python 3.7+ and running
+All dependencies required by this repo can be downloaded by creating a virtual environment with Python 3.6 and running
 
 ``` Batchfile
 pip install -r requirements.txt
