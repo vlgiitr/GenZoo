@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 batch_size = 100
 
 
-def loss_function(x_output, x, mean, logvar):
+def loss_function(out, target, mean, logvar):
     bce = F.binary_cross_entropy(x_output.view(-1, 784), x.view(-1, 784))
     kld = -0.5 * torch.sum(1 + logvar - mean.pow(2) - logvar.exp())
-    return (bce + kld) / (784 * batch_size)
+    return bce + (kld / (784 * batch_size))
 
 
 def train(trainloader, num_epoch, optimiser, model, device, print_every):
@@ -31,7 +31,29 @@ def train(trainloader, num_epoch, optimiser, model, device, print_every):
             loss.backward()
             optimiser.step()
 
-        print(x_output.shape)
+        model.to('cpu')
         model.eval()
-        plt.imshow(x_output[0].squeeze().detach().numpy(), cmap='gray')
-        plt.show(block=True)
+        out, _, _ = model(images)
+
+        # Display a 2D manifold of the digits
+        n = 10  # figure with 20x20 digits
+        digit_size = 28
+        figure = np.zeros((digit_size * n, digit_size * n))
+
+        # Construct grid of latent variable values
+        grid_x = norm.ppf(np.linspace(0.05, 0.95, n))
+        grid_y = norm.ppf(np.linspace(0.05, 0.95, n))
+
+        counter = 0
+        # decode for each square in the grid
+        for i, yi in enumerate(grid_x):
+            for j, xi in enumerate(grid_y):
+                digit = out[counter].squeeze().detach().numpy()
+                figure[i * digit_size: (i + 1) * digit_size,
+                j * digit_size: (j + 1) * digit_size] = digit
+                counter += 1
+
+        plt.figure(figsize=(10, 10))
+        plt.imshow(figure, cmap='bone')
+        plt.show()
+
