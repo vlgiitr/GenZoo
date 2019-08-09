@@ -6,7 +6,7 @@ __name__ = "model.py"
 
 
 class VAE(nn.Module):
-    def __init__(self, z_dim=20, keep_prob=0.2):
+    def __init__(self, z_dim=8, keep_prob=0.2):
         super().__init__()
         self.conv = nn.Sequential(nn.Conv2d(1, 5, 3, padding=1), nn.LeakyReLU(), nn.MaxPool2d(2, 2), nn.BatchNorm2d(5),
                                   nn.Conv2d(5, 10, 3, padding=1), nn.LeakyReLU(), nn.MaxPool2d(2, 2),

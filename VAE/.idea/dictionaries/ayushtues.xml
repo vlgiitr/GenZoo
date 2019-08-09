@@ -1,8 +1,14 @@
 <component name="ProjectDictionaryState">
   <dictionary name="ayushtues">
     <words>
+      <w>ayushtues</w>
       <w>cuda</w>
+      <w>dataloader</w>
+      <w>genzoo</w>
+      <w>logvar</w>
+      <w>mnist</w>
       <w>trainloader</w>
+      <w>tsne</w>
     </words>
   </dictionary>
 </component>
