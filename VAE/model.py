@@ -4,11 +4,11 @@ import torch.nn.functional as F
 
 
 class VAE(nn.Module):
-    def __init__(self, z_dim=8, keep_prob=0.2):
+    def __init__(self, z_dim=20, keep_prob=0.2):
         super().__init__()
-        self.conv = nn.Sequential(nn.Conv2d(1, 5, 3, padding=1), nn.LeakyReLU(), nn.MaxPool2d(2, 2), nn.BatchNorm2d(5),
-                                  nn.Conv2d(5, 10, 3, padding=1), nn.LeakyReLU(), nn.MaxPool2d(2, 2),
-                                  nn.BatchNorm2d(10), nn.Conv2d(10, 16, 3, padding=1))
+        self.conv = nn.Sequential(nn.Conv2d(1, 16, 3, padding=1), nn.LeakyReLU(), nn.MaxPool2d(2, 2), nn.BatchNorm2d(16),
+                                  nn.Conv2d(16, 32, 3, padding=1), nn.LeakyReLU(), nn.MaxPool2d(2, 2),
+                                  nn.BatchNorm2d(32), nn.Conv2d(32, 16, 3, padding=1))
         # conv model sort of based on  AlexNet  using leaky ReLU
         self.fc1 = nn.Linear(784, 512)
         nn.init.xavier_normal_(self.fc1.weight)
@@ -26,11 +26,11 @@ class VAE(nn.Module):
         nn.init.xavier_normal_(self.fc5.weight)
         nn.init.zeros_(self.fc5.bias)
         # a bunch of linear layers with Xavier Initialisation
-        self.decode = nn.Sequential(nn.ConvTranspose2d(16, 10, 3, padding=1),
-                                    nn.BatchNorm2d(10),
-                                    nn.ConvTranspose2d(10, 5, 8),
-                                    nn.BatchNorm2d(5),
-                                    nn.ConvTranspose2d(5, 1, 15))
+        self.decode = nn.Sequential(nn.ConvTranspose2d(16, 32, 3, padding=1),
+                                    nn.BatchNorm2d(32),
+                                    nn.ConvTranspose2d(32, 16, 8),
+                                    nn.BatchNorm2d(16),
+                                    nn.ConvTranspose2d(16, 1, 15))
         # decoder made of transpose convolutions (deconv) for upsampling and batchnorm
         self.mean = nn.Linear(256, z_dim)
         nn.init.xavier_normal_(self.mean.weight)
