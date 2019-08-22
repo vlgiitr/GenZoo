@@ -1,0 +1,9 @@
+numpy==1.13.3
+matplotlib==2.1.1
+future==0.17.1
+scipy==0.19.1
+scikit_learn==0.21.3
+torch==1.2.0
+torchvision==0.4.0
+tqdm==4.34.0
+tensorboard==1.14.0
