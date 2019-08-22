@@ -29,7 +29,16 @@ Now this is done using ..well a lot of complicated maths ..something called vari
   
 The first term is basically maximising the likelihood of the input data and is simply said the reconstruction loss . The second term is a KL divergence loss and it measures the similarity of Q(z|x) and P(z) . P(z) is what the distribution of the latent variables should be (ie . unit gaussian) and Q(z|x) is our approximator of P(z) using the encoder neural network ( Its also a gaussian but with mean and variance output by the encoder)
 
-
+## Contents
+1. [Setup Instructions and Dependencies](#1-setup-instructions-and-dependencies)
+2. [Training your model from scratch](#2-training-your-model-from-scratch)
+3. [Generating images from model](#3-generating-images-from-model)
+4. [Architecture](#4-architecture)
+5. [Results](#5-results)
+    1. [Training images](#1-training-images)
+    2. [T-sne Visualization](#2-t-sne-visualization)
+    3. [Image generated from random gaussian input ](#3-image-generated-from-random-gaussian-input)
+    4. [Smooth transition between two digits](#4-smooth-transition-between-two-digits)
 
 So basically the loss has two opposing functions ..the reconstruction loss which tries to recreate the input as such not caring about the latent variable distribution and the KL divergence term which forces the distribution to be gaussian .
 
