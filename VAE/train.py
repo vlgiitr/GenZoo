@@ -75,8 +75,6 @@ def train(trainloader, num_epoch, optimiser, model, device, batch_size, print_ev
             loss_total += loss
             optimiser.step()
             pbar.update(1)
-            if i > 10:
-                break
 
         reconstruction_loss /= len(trainloader)
         kld_total /= len(trainloader)
