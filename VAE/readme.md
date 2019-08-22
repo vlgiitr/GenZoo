@@ -33,12 +33,15 @@ The first term is basically maximising the likelihood of the input data and is s
 1. [Setup Instructions and Dependencies](#1-setup-instructions-and-dependencies)
 2. [Training your model from scratch](#2-training-your-model-from-scratch)
 3. [Generating images from model](#3-generating-images-from-model)
-4. [Architecture](#4-architecture)
-5. [Results](#5-results)
+4. [Repository Overview](#4-repository-overview)
+5. [Architecture](#5-architecture)
+6. [Results](#6-results)
     1. [Training images](#1-training-images)
     2. [T-sne Visualization](#2-t-sne-visualization)
     3. [Image generated from random gaussian input ](#3-image-generated-from-random-gaussian-input)
     4. [Smooth transition between two digits](#4-smooth-transition-between-two-digits)
+7.
+8. [Credits](#7-credits)
 
 So basically the loss has two opposing functions ..the reconstruction loss which tries to recreate the input as such not caring about the latent variable distribution and the KL divergence term which forces the distribution to be gaussian .
 
@@ -86,7 +89,26 @@ python generate.py  --dataset [DATASET] --model_path [PATH_TO_MODEL] --grid_size
 
 You can use a pre-trained model (with z_dims = 20) by downloading it from the link in `model.txt`
 
-## 4. Architecture
+## 4. Repository Overview
+
+The repository contains of the following files
+
+- `main.py` - Does the major work , Calls functions from various other files to nake , train , save the model and also do the t-sne visualisation .
+- `train.py`-  Has the loss function , also the function to display images in a grid , save the reconstructed training images and also the model. Basically handles the training.
+- `model.py` - Contains the VAE model , the encoder , decoder , forward functions.
+- `dataloader.py` - Returns a dataloader from the MNIST dataset with given batch size .
+- `generate-py` - Generates new images and also the transition between two digits grid from a pretrained model .
+- `model.txt` - Contains link to a pretrained model (with z_dims =20)
+- `readme.md` - Readme giving overview of the repo
+- `requirements.txt` - Has all the required dependencies to be installed  for the repo
+- `readme_images` - Has various images for the readme
+- `configs` - Has the config.ini file 
+- `MNIST_dataset` - Contains the downloaded MNIST Dataset(though `main.py` will download it if needed automatically)
+- `experiments` - Has various results of the training of the model
+    - `generated_images` - Contains the digit_transit images and also new generated images
+    - `mnist` - Contains the saved models , training images , and t-sne visualisation
+
+## 5. Architecture
 
 <img src='readme_images/VAE_architecture.png' style="max-width:100%">
 
@@ -95,37 +117,42 @@ The encoder first has a bunch of convultional layers with LeakyRelu activation f
 
 Then we sample from the distribution using the reparameterisation trick . With z = (std*eps)+mean , where eps = N (0,I) .
 
-The decoder consists of a bunch of fully conncected layers followed by Transpose Convolutional layers and finally a sigmoid function which gives the output images . 
-## 5. Results
+The decoder consists of a bunch of fully conncected layers followed by Transpose Convolutional layers and finally a sigmoid function which gives the output images .
+## 6. Results
 ### 1. Training images
 Image from 0th epoch  
 
-<img src='readme_images/trainiing_images/img_from_epoch0.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch0.png' style="max-width:100%">
 
 Image from 20th epoch  
 
-<img src='readme_images/trainiing_images/img_from_epoch20.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch20.png' style="max-width:100%">
 
 Image from 40th epoch  
 
-<img src='readme_images/trainiing_images/img_from_epoch40.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch40.png' style="max-width:100%">
 
 Image from 60th epoch  
 
-<img src='readme_images/trainiing_images/img_from_epoch60.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch60.png' style="max-width:100%">
 
 Image from 80th epoch  
 
-<img src='readme_images/trainiing_images/img_from_epoch80.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch80.png' style="max-width:100%">
 
 Image from 95th epoch  
-<img src='readme_images/trainiing_images/img_from_epoch95.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch95.png' style="max-width:100%">  
+  
+    
+ As we can see the reconstruction is a bit blurred and has scope for improvement.
 
 ### 2. T-sne Visualization
 
 After 100 epochs the t-sne visualisation is     
 
-<img src='readme_images/t_sne_visualization.png' style="max-width:100%">
+<img src='readme_images/t_sne_visualization.png' style="max-width:100%">  
+  
+ As we can see there are clearly 10 clusters formed and also there is a smooth transition between them , which means the model is working fine ( although there is 1 seperate cluster )
 
 ### 3. Image generated from random gaussian input 
 
@@ -133,8 +160,40 @@ The following image was generated after passing a randomly sampled z from the un
 
 <img src='readme_images/user_generated_image.png' style="max-width:100%">
 
+  
+ Although its clear that the images could be better but still they resemble digits well enough for a randomly sampled gaussian input .
+
 ### 4. Smooth transition between two digits
 
 The following shows images formed when the latent variable z of one image was uniformly changed into that of another image and was passed through the decoder 
 
-<img src='readme_images/digit_transit.png' style="max-width:100%">
+<img src='readme_images/digit_transit.png' style="max-width:100%">  
+  
+    
+ As we can see there is a smooth transition between  1 and 2
+ ## 7.Observations
+ The model was trained on google colab for 100 epoch , with batch size 50 . It took approx 10-15 mins to train .  
+ 
+ After training the model was able to reconstruct the input images quite well , and was also able to generate new images although the generated images are not so clear .  
+ The T-sne visualisation of the latent space shows that the latent space has been divided into 10 clusters , but also has smooth transitions between these spaces , indicating that the model forced the latent space to be a bit similar with the normal distribution .   
+ The digit-transit images show that latent space have a sort of linear property in them and linearly changing the latent variables from one digit to another leads to a smooth transition .  
+   
+ One peculiar thing to notice was that the **KL-Divergence loss actually increased as the model trained** .  
+ I found a  possible explanation at  [this reddit post](https://www.reddit.com/r/MachineLearning/comments/6m2tje/d_kl_divergence_decreases_to_a_point_and_then/)  
+   
+ TLDR : Guess its easier for the model to make the distribution gaussian so it first does that , but a perfect gaussian means that there is no uniqueness introduced by the training images , so after a while the distribution shifts from a perfect gaussian to incorporate the subtle patterns in the data and thus increasing the KLD loss .
+ 
+ ## 8. Credits
+ The following sources helped a lot to make this repository
+ 
+ - [Auto-Encoding Variational Bayes - 
+Diederik P Kingma, Max Welling](https://arxiv.org/abs/1312.6114)
+ - [VAE Tutorial by Carl Doersch](https://arxiv.org/abs/1606.05908)
+ - [Tutorial - What is a variational autoencoder? – Jaan Altosaar
+](https://jaan.io/what-is-variational-autoencoder-vae-tutorial/)
+ - [Variational Autoencoder: Intuition and Implementation](https://wiseodd.github.io/techblog/2016/12/10/variational-autoencoder/)
+ - https://github.com/Atharv24/GenZoo/tree/master/DCGAN
+ - https://github.com/aniket-agarwal1999/VAE-Pytorch
+ 
+ 
+ 
