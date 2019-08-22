@@ -61,7 +61,8 @@ You can train the model from scratch by the following command
 python main.py --config /path/to/config.ini
 
 ```
-The `config.ini` file should specify all the required parameters of the model.
+The `config.ini` file should specify all the required parameters of the model.  
+**To train on gpu set gpu = 1 else gpu = 0 in config.ini**
 
 The program automatically downloads the MNIST dataset and saves it in `MNIST_dataset` (creating the folder itself) . This only happens once
 
