@@ -11,8 +11,11 @@ import matplotlib.pyplot as plt
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import save_image
 from tqdm import tqdm
+import data_loader as load
 
+dataloader2 = load.load_mnist(200)
 writer = SummaryWriter()
+data2 = iter(dataloader2)
 
 
 def loss_function(out, target, mean, logvar, batch_size):
@@ -74,6 +77,10 @@ def train(trainloader, num_epoch, optimiser, model, device, batch_size, print_ev
             pbar.update(1)
             if i > 10:
                 break
+
+        reconstruction_loss /= len(trainloader)
+        kld_total /= len(trainloader)
+        loss_total /= len(trainloader)
         writer.add_scalar('reconstruction loss', reconstruction_loss, epoch)
         writer.add_scalar('KLD loss', kld_total, epoch)
         writer.add_scalar('Total Loss', loss_total, epoch)
@@ -81,7 +88,9 @@ def train(trainloader, num_epoch, optimiser, model, device, batch_size, print_ev
 
         if count % print_every == 0:
             model.eval()
-            figure = torch.from_numpy(display_grid(5, 28, x_output)).float()
+            images2, labels = data2.next()
+            image_output, _, _ = model(images2)
+            figure = torch.from_numpy(display_grid(8, 28, image_output)).float()
             save_image(figure, image_save_directory + '/img_from_epoch' + str(count) + '.png')
             # display the reconstructed output for the input training images
 
