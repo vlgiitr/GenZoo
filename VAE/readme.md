@@ -28,7 +28,55 @@ The first term is basically maximising the likelihood of the input data and is s
 
 So basically the loss has two opposing functions ..the reconstruction loss which tries to recreate the input as such not caring about the latent variable distribution and the KL divergence term which forces the distribution to be gaussian .
 
+## Architecture
 
+<img src='readme_images/VAE_architecture.png' style="max-width:100%">
 
+The architecture is basically divided into two parts  an encoder and a decoder .
+The encoder first has a bunch of convultional layers with LeakyRelu activation function and max pooling and batchnorm . The last conv layer also has dropout. Then there are a bunch of Fully connected layers with leakyRelu activation and dropout . Finally a fully connected layer gives us the mean and logvar respectively.
 
+Then we sample from the distribution using the reparameterisation trick . With z = (std*eps)+mean , where eps = N (0,I) .
 
+The decoder consists of a bunch of fully conncected layers followed by Transpose Convolutional layers and finally a sigmoid function which gives the output images . 
+
+## Training images
+Image from 0th epoch  
+
+<img src='readme_images/trainiing_images/img_from_epoch0.png' style="max-width:100%">
+
+Image from 20th epoch  
+
+<img src='readme_images/trainiing_images/img_from_epoch20.png' style="max-width:100%">
+
+Image from 40th epoch  
+
+<img src='readme_images/trainiing_images/img_from_epoch40.png' style="max-width:100%">
+
+Image from 60th epoch  
+
+<img src='readme_images/trainiing_images/img_from_epoch60.png' style="max-width:100%">
+
+Image from 80th epoch  
+
+<img src='readme_images/trainiing_images/img_from_epoch80.png' style="max-width:100%">
+
+Image from 95th epoch  
+<img src='readme_images/trainiing_images/img_from_epoch95.png' style="max-width:100%">
+
+## T-sne Visualization
+
+After 100 epochs the t-sne visualisation is     
+
+<img src='readme_images/t_sne_visualization.png' style="max-width:100%">
+
+## Image generated from random gaussian input 
+
+The following image was generated after passing a randomly sampled z from the unit gaussian and then passed through the decoder       
+
+<img src='readme_images/user_generated_image.png' style="max-width:100%">
+
+## Smooth transition between two digits
+
+The following shows images formed when the latent variable z of one image was uniformly changed into that of another image and was passed through the decoder 
+
+<img src='readme_images/digit_transit.png' style="max-width:100%">
