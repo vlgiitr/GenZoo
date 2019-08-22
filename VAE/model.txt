@@ -1,0 +1,3 @@
+The zip file containing the pretrained model on MNIST dataset
+
+https://drive.google.com/open?id=1bTaVUitmt2-kX1c2hZNNK7w7YDBuwq6z
