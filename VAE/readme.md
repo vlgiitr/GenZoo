@@ -33,8 +33,9 @@ The first term is basically maximising the likelihood of the input data and is s
 1. [Setup Instructions and Dependencies](#1-setup-instructions-and-dependencies)
 2. [Training your model from scratch](#2-training-your-model-from-scratch)
 3. [Generating images from model](#3-generating-images-from-model)
-4. [Architecture](#4-architecture)
-5. [Results](#5-results)
+4. [Repository Overview](#4-repository-overview)
+5. [Architecture](#5-architecture)
+6. [Results](#6-results)
     1. [Training images](#1-training-images)
     2. [T-sne Visualization](#2-t-sne-visualization)
     3. [Image generated from random gaussian input ](#3-image-generated-from-random-gaussian-input)
@@ -86,7 +87,26 @@ python generate.py  --dataset [DATASET] --model_path [PATH_TO_MODEL] --grid_size
 
 You can use a pre-trained model (with z_dims = 20) by downloading it from the link in `model.txt`
 
-## 4. Architecture
+## 4. Repository Overview
+
+The repository contains of the following files
+
+- `main.py` - Does the major work , Calls functions from various other files to nake , train , save the model and also do the t-sne visualisation .
+- `train.py`-  Has the loss function , also the function to display images in a grid , save the reconstructed training images and also the model. Basically handles the training.
+- `model.py` - Contains the VAE model , the encoder , decoder , forward functions.
+- `dataloader.py` - Returns a dataloader from the MNIST dataset with given batch size .
+- `generate-py` - Generates new images and also the transition between two digits grid from a pretrained model .
+- `model.txt` - Contains link to a pretrained model (with z_dims =20)
+- `readme.md` - Readme giving overview of the repo
+- `requirements.txt` - Has all the required dependencies to be installed  for the repo
+- `readme_images` - Has various images for the readme
+- `configs` - Has the config.ini file 
+- `MNIST_dataset` - Contains the downloaded MNIST Dataset(though `main.py` will download it if needed automatically)
+- `experiments` - Has various results of the training of the model
+    - `generated_images` - Contains the digit_transit images and also new generated images
+    - `mnist` - Contains the saved models , training images , and t-sne visualisation
+
+## 5. Architecture
 
 <img src='readme_images/VAE_architecture.png' style="max-width:100%">
 
@@ -96,11 +116,11 @@ The encoder first has a bunch of convultional layers with LeakyRelu activation f
 Then we sample from the distribution using the reparameterisation trick . With z = (std*eps)+mean , where eps = N (0,I) .
 
 The decoder consists of a bunch of fully conncected layers followed by Transpose Convolutional layers and finally a sigmoid function which gives the output images . 
-## 5. Results
+## 6. Results
 ### 1. Training images
 Image from 0th epoch  
 
-<img src='readme_images/trainiing_images/img_from_epoch0.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch0.png' style="max-width:100%">
 
 Image from 20th epoch  
 
