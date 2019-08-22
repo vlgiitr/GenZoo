@@ -119,7 +119,7 @@ Image from 80th epoch
 <img src='readme_images/training_images/img_from_epoch80.png' style="max-width:100%">
 
 Image from 95th epoch  
-<img src='readme_images/trainiing_images/img_from_epoch95.png' style="max-width:100%">
+<img src='readme_images/training_images/img_from_epoch95.png' style="max-width:100%">
 
 ### 2. T-sne Visualization
 
