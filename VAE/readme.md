@@ -40,8 +40,9 @@ The first term is basically maximising the likelihood of the input data and is s
     2. [T-sne Visualization](#2-t-sne-visualization)
     3. [Image generated from random gaussian input ](#3-image-generated-from-random-gaussian-input)
     4. [Smooth transition between two digits](#4-smooth-transition-between-two-digits)
-7.
-8. [Credits](#7-credits)
+    5. [Training Graphs](#5-training-graphs)
+7. [Observations](#7observations)
+8. [Credits](#8-credits)
 
 So basically the loss has two opposing functions ..the reconstruction loss which tries to recreate the input as such not caring about the latent variable distribution and the KL divergence term which forces the distribution to be gaussian .
 
@@ -107,7 +108,13 @@ The repository contains of the following files
 - `experiments` - Has various results of the training of the model
     - `generated_images` - Contains the digit_transit images and also new generated images
     - `mnist` - Contains the saved models , training images , and t-sne visualisation
+- `runs` Contains the tensorboard logs (automatically created by program)
 
+Do the following to run tensorboard
+
+```
+tensordboard --logdir path/to/directory/runs
+```
 ## 5. Architecture
 
 <img src='readme_images/VAE_architecture.png' style="max-width:100%">
@@ -167,10 +174,26 @@ The following image was generated after passing a randomly sampled z from the un
 
 The following shows images formed when the latent variable z of one image was uniformly changed into that of another image and was passed through the decoder 
 
-<img src='readme_images/digit_transit.png' style="max-width:100%">  
-  
-    
+<img src='readme_images/digit_transit.png' style="max-width:100%">    
  As we can see there is a smooth transition between  1 and 2
+  
+### 5. Training Graphs
+  **KLD LOSS**
+  
+   <img src='readme_images/KLD_loss.svg' style="max-width:100%">      
+    
+   **As we can see the KLD loss actually increased**
+     
+   **Reconstruction Loss**  
+      <img src='readme_images/reconstruction_loss.svg' style="max-width:100%">  
+        
+   **Total_Loss**
+         <img src='readme_images/Total_Loss.svg' style="max-width:100%">  
+
+
+   **As we can see the total loss and reconstruction loss decrease uniformly as expected**
+   
+
  ## 7.Observations
  The model was trained on google colab for 100 epoch , with batch size 50 . It took approx 10-15 mins to train .  
  
