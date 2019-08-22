@@ -44,12 +44,10 @@ exp_path = "./experiments/" + exp_name
 pathlib.Path(exp_path).mkdir(parents=True, exist_ok=True)
 image_save_directory = exp_path + "/training_images"
 checkpoint_dir = exp_path + '/training_checkpoints/'
-logs_path = exp_path + "/loss_graph_logs"
 # transit_image_directory = exp_path + '/digit_transit/'
 t_sne_save_directory = exp_path + '/t_sne/'
 pathlib.Path(image_save_directory).mkdir(parents=True, exist_ok=True)
 pathlib.Path(checkpoint_dir).mkdir(parents=True, exist_ok=True)
-pathlib.Path(logs_path).mkdir(parents=True, exist_ok=True)
 # pathlib.Path(transit_image_directory).mkdir(parents=True, exist_ok=True)
 pathlib.Path(t_sne_save_directory).mkdir(parents=True, exist_ok=True)
 
