@@ -38,6 +38,7 @@ The first term is basically maximising the likelihood of the input data and is s
     3. [Image generated from random gaussian input ](#3-image-generated-from-random-gaussian-input)
     4. [Smooth transition between two digits](#4-smooth-transition-between-two-digits)
     5. [Training Graphs](#5-training-graphs)
+    6. [Single digit generated samples](#6-single-digit-generated-samples)
 7. [Observations](#7observations)
 8. [Credits](#8-credits)
 
@@ -75,16 +76,21 @@ The `exp_name` file has 3 folders
 
 ## 3. Generating images from model
 
-To generate new images from z sampled randomly from uniform gaussian and to make a nice digit transit grid run the following command 
+To generate new images from z sampled randomly from uniform gaussian and to make a nice digit transit grid run the following command.  
+ 
+It can also generate a single digit , for which it basically takes the mean of the means and variance produced for all samples in the test dataset for that digit and uses this averaged mean and variance to sample some latent variables and pass it in the decoder .
 ```
-python generate.py  --dataset [DATASET] --model_path [PATH_TO_MODEL] --grid_size [GRID_SIZE] --save_path [SAVE_DIRECTORY]  --z_dims [Z_DIMENSIONS]
+python generate.py  --dataset [DATASET] --model_path [PATH_TO_MODEL] --grid_size [GRID_SIZE] --save_path [SAVE_DIRECTORY]  --z_dims [Z_DIMENSIONS] --grid_size2 [GRID_SIZE2] --no_datapoints [NO_DATAPOINTS] --digit [DIGIT]
 ```
 
-- `dataset` - the dataset to generate new images from (Currently only MNIST(case sensitive) allowed)
-- `model_path` - the path to the pre-trained model
-- `grid_size`  - the size of the grid of the images generated (grid_size X grid_size matrix created) (default 8)
-- `save_path` - The directory where to save the images
-- `z_dims` the size of the latent space (Useful if training models with different z_dims otherwise) (default 20 )
+- `dataset`      - the dataset to generate new images from (Currently only MNIST(case sensitive) allowed)
+- `model_path`   - the path to the pre-trained model
+- `grid_size`    - the size of the grid of the images generated (grid_size X grid_size matrix created) (default 8)
+- `save_path`    - the directory where to save the images
+- `z_dims`       - the size of the latent space (Useful if training models with different z_dims otherwise) (default 20 )
+- `grid_size2`   - the size of the grid of the generated images of a single number sampled randomly
+- `no_datapoints`- the number of test datapoints used for approximating mean and var of the single digit
+- `digit`        - the digit to generate   
 
 You can use a pre-trained model (with z_dims = 20) by downloading it from the link in `model.txt`
 
@@ -96,7 +102,7 @@ The repository contains of the following files
 - `train.py`-  Has the loss function , also the function to display images in a grid , save the reconstructed training images and also the model. Basically handles the training.
 - `model.py` - Contains the VAE model , the encoder , decoder , forward functions.
 - `dataloader.py` - Returns a dataloader from the MNIST dataset with given batch size .
-- `generate-py` - Generates new images and also the transition between two digits grid from a pretrained model .
+- `generate-py` - Generates new images and also the transition between two digits grid from a pretrained model.
 - `model.txt` - Contains link to a pretrained model (with z_dims =20)
 - `readme.md` - Readme giving overview of the repo
 - `requirements.txt` - Has all the required dependencies to be installed  for the repo
@@ -191,14 +197,28 @@ The following shows images formed when the latent variable z of one image was un
 
    **As we can see the total loss and reconstruction loss decrease uniformly as expected**
    
+### 6 . Single digit generated samples
+The following images are genrated by randomly sampling latent variables from a gaussian with mean and var given by the average of all the means and var output by all the test examples of the images belonging to that class  
+  
+Generated images of digit 1
+ 
+ <img src='readme_images/digit_1.png' style="max-width:100%">    
+
+Generated images of digit 9  
+
+<img src='readme_images/digit_9.png' style="max-width:100%"> 
+  
+ As we can the see the images resemble the corresponding digits . 
 
  ## 7.Observations
  The model was trained on google colab for 100 epoch , with batch size 50 . It took approx 10-15 mins to train .  
  
  After training the model was able to reconstruct the input images quite well , and was also able to generate new images although the generated images are not so clear .  
  The T-sne visualisation of the latent space shows that the latent space has been divided into 10 clusters , but also has smooth transitions between these spaces , indicating that the model forced the latent space to be a bit similar with the normal distribution .   
- The digit-transit images show that latent space have a sort of linear property in them and linearly changing the latent variables from one digit to another leads to a smooth transition .  
+ The digit-transit images show that **latent space has a linear nature** and linearly changing the latent variables from one digit to another leads to a smooth transition .    
    
+  **Also using the estimate of mean and var for a single class , and generating samples from it gave pretty good images , so this might mean that the marginal distribution of a particular class is can be approximated by a gaussian with the mean and var as given by the method and the dataset can be viewed as a sum of 10 different gaussians**
+ 
  One peculiar thing to notice was that the **KL-Divergence loss actually increased as the model trained** .  
  I found a  possible explanation at  [this reddit post](https://www.reddit.com/r/MachineLearning/comments/6m2tje/d_kl_divergence_decreases_to_a_point_and_then/)  
    
