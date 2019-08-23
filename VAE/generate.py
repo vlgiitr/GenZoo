@@ -6,6 +6,34 @@ import torch.utils
 import train
 import data_loader as load
 import train as train_model
+import numpy as np
+import torch.distributions as tdist
+
+testloader = load.load_mnist_test()
+data2 = iter(testloader)
+
+
+def generate_digit(no_datapoints, grid_size, digit):
+    images2, labels2 = data2.next()
+    images2 = images2[0:no_datapoints]
+    labels2 = labels2[0:no_datapoints]
+    mean, logvar = model_mnist.encoder(images2)
+    var = logvar.mul(0.5).exp()
+    y = labels2.detach().numpy()
+    ind = np.where(y == digit)
+    mean_average = torch.mean(mean[ind], 0)
+    std_average = torch.sqrt(torch.mean(var[ind], 0))
+    dist = tdist.Normal(mean_average, std_average)
+    t = tuple([grid_size * grid_size]) + tuple(mean_average.size())
+    z2 = torch.zeros(t)
+
+    for i in range(z2.shape[0]):
+        z2[i] = dist.sample()
+    print(z2.shape)
+    x_output = model_mnist.decoder(z2)
+
+    figure2 = torch.from_numpy(train_model.display_grid(grid_size=grid_size, digit_size=28, images=x_output)).float()
+    save_image(figure2, transit_image_directory + 'digit_generated.png')
 
 
 def display_transit():
@@ -47,11 +75,19 @@ parser.add_argument("--grid_size", help="the size of the grid to make (a grid_si
                     default='8')
 parser.add_argument("--save_path", help="the path to save image at ", default='./experiments/generated_images/')
 parser.add_argument("--z_dims", help="the size of the latent space ", default='20')
+parser.add_argument("--grid_size2", help="the grid size  of the digit generating image ", default='8')
+parser.add_argument("--no_datapoints", help="the number of  test data-points used for estimating mean and var for "
+                                            "generation ", default='1000')
+parser.add_argument("--digit", help="the digit to generate", default='9')
 
 args = parser.parse_args()
 
 grid_size = int(args.grid_size)
 z_dim = int(args.z_dims)
+digit = int(args.digit)
+no_datapoints = int(args.no_datapoints)
+grid_size2 = int(args.grid_size2)
+
 pathlib.Path(args.save_path).mkdir(parents=True, exist_ok=True)
 
 model_mnist = model.make_model(z_dim)
@@ -73,3 +109,4 @@ transit_image_directory = args.save_path + '/digit_transit/'
 pathlib.Path(transit_image_directory).mkdir(parents=True, exist_ok=True)
 
 display_transit()
+generate_digit(no_datapoints=no_datapoints, grid_size=grid_size, digit=digit)
