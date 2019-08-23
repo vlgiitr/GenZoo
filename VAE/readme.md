@@ -38,7 +38,7 @@ The first term is basically maximising the likelihood of the input data and is s
     3. [Image generated from random gaussian input ](#3-image-generated-from-random-gaussian-input)
     4. [Smooth transition between two digits](#4-smooth-transition-between-two-digits)
     5. [Training Graphs](#5-training-graphs)
-    6. [Single digit generated samples](#6-single-digit-generated-samples)
+    6. [Single digit generated samples](#6--single-digit-generated-samples)
 7. [Observations](#7observations)
 8. [Credits](#8-credits)
 
