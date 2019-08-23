@@ -217,7 +217,7 @@ Generated images of digit 9
  The T-sne visualisation of the latent space shows that the latent space has been divided into 10 clusters , but also has smooth transitions between these spaces , indicating that the model forced the latent space to be a bit similar with the normal distribution .   
  The digit-transit images show that **latent space has a linear nature** and linearly changing the latent variables from one digit to another leads to a smooth transition .    
    
-  **Also using the estimate of mean and var for a single class , and generating samples from it gave pretty good images , so this might mean that the marginal distribution of a particular class is can be approximated by a gaussian with the mean and var as given by the method and the dataset can be viewed as a sum of 10 different gaussians**
+  **Also using the estimate of mean and var for a single class , and generating samples from it gave pretty good images , so this might mean that the marginal distribution of a particular class is can be approximated by a gaussian with the mean and var as given by the method and the dataset can be viewed as a sum of 10 different gaussians . Although there are a few 4's and 8's generated in the 9's image meaning these gaussians have some mixing**
  
  One peculiar thing to notice was that the **KL-Divergence loss actually increased as the model trained** .  
  I found a  possible explanation at  [this reddit post](https://www.reddit.com/r/MachineLearning/comments/6m2tje/d_kl_divergence_decreases_to_a_point_and_then/)  
