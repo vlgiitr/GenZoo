@@ -5,7 +5,7 @@ def make_models_mnist():
     '''
     Returns 2 models -> gen_model, disc_model
     1.) Generator Model
-    Takes 100 dimentional noise as input to produce a 28x28x1 image resembling MNIST database
+    Takes 100 dimensional noise as input to produce a 28x28x1 image resembling MNIST database
 
     2.) Discriminator Model
     Takes a 28x28x1 image and labels it as Real(1) or Fake/Generated(0)
