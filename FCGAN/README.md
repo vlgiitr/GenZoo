@@ -2,7 +2,7 @@
 # Fully Connected GAN(also known as Vanilla GAN) in Pytorch
 This repository contains code of FCGAN which is tested and trained on MNIST and CIFAR-10 datasets. It is based on Pytorch framework.
 
-<img src="resources/mnist_training.gif" width=410><img src="resources/cifar_training.gif" width=410>
+<img src="resources/mnist_training.gif" width=360>                  <img src="resources/cifar_training.gif" width=360>
 
 ## Generative Adversarial Networks
 GANs are generally made up of two models: The Artist (Generator) and The Critic (Discriminator). The generator creates an image from random noise, and the discriminator evaluates the generated image with the images in the given dataset. We train the models by minimaxing the costs of the models. The generator tries to fool the discriminator by producing realistic looking images, and the discriminator becomes better in understanding the difference between real and fake images. This two player game improves the model until the generator produces realistic images or the system reaches nash equilibrium.
