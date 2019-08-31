@@ -37,22 +37,15 @@ All dependencies required by this repo can be downloaded by creating a virtual e
 pip install -r requirements.txt
 ```
 
-Make sure to have CUDA 10.0.130 and cuDNN 7.6.0 installed in the virtual environment.  For a conda environment, this can be done by using the following commands:
-
-```Batchfile
-conda install cudatoolkit=10.0
-conda install cudnn=7.6.0
-```
-
 ## 2. Training Model from Scratch
 To train your own model from scratch, run
 
 ```Batchfile
-python train.py -config path/to/config.ini
+python train.py 
 ```
 
 + The parameters for your experiment are all set by defualt. But you are free to set them on your own.
-+ The training script will create a folder **exp_name** as specified in your `config.ini` file.
++ The training script will create a folder **exp_name** as specified specified by the user.
 + This folder will contain all data related to your experiment such as tensorboard logs, images generated during training and training checkpoints.
 
 ## 3. Generating Images from Trained Models
@@ -103,10 +96,10 @@ This repository contains the following files and folders
 
 ## 6. Results Obtained
 ### i. Generated Images
-Samples generated after training model for 100 epochs on MNIST.
+Samples generated after training model for 100 epochs on MNIST. <br>
 ![mnist_generated](resources/generated_image_mnist.png)
 
-Samples generated after training model for 200 epochs on CIFAR-10.
+Samples generated after training model for 200 epochs on CIFAR-10. <br>
 ![cifar_generated](resources/generated_image_cifar.png)
 
 ### ii. Parameters Used
