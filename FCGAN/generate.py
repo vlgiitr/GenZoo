@@ -8,10 +8,10 @@ import argparse
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset',default='mnist',help='dataset to generate image from [mnist/cifar10]')
-parser.add_argument('--load_path',default='saved_models/checkpoint-80.ckpt', help='Directory of checkpoint to load')
-parser.add_argument('--grid_size',default=8, help='Grid size for generating images. Will generate grid_size*grid_size images')
-parser.add_argument('--save_path',default='saved_images', help='Path for saving image')
+parser.add_argument('--dataset',help='dataset to generate image from [mnist/cifar10]')
+parser.add_argument('--load_path', help='Directory of checkpoint to load')
+parser.add_argument('--grid_size',default=4, help='Grid size for generating images. Will generate grid_size*grid_size images')
+parser.add_argument('--save_path', help='Path for saving image')
 parser.add_argument('--z_dim',default=100,help='The noise dimension as used in training')
 args = parser.parse_args()
 grid_size = int(args.grid_size)
