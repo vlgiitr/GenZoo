@@ -105,7 +105,7 @@ Samples generated after training model for 200 epochs on CIFAR-10. <br>
 ### ii. Parameters Used
 + Optimizer used is Adam
 + Learning rate 0.0002, beta-1 0.5
-+ Trained for 100 epochs (MNIST) and 100 epochs (CIFAR10)
++ Trained for 100 epochs (MNIST) and 200 epochs (CIFAR10)
 + Batch size is 128 for both  (MNIST) and (CIFAR10)
 + The model uses label flipping (i.e. real images are assigned 0 and fake images are assigned 1)
 
