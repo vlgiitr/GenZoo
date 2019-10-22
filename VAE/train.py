@@ -34,7 +34,7 @@ def display_grid(grid_size, digit_size, images):
     # we create a very big image and divide it into different sub-images
     grid_x = norm.ppf(np.linspace(0, 0.9, grid_size))
     grid_y = norm.ppf(np.linspace(0, 0.9, grid_size))
-
+    
     counter = 0
     # decode for each square in the grid
     for i, yi in enumerate(grid_x):
@@ -62,26 +62,26 @@ def train(trainloader, num_epoch, optimiser, model, device, batch_size, print_ev
         reconstruction_loss = 0
         kld_total = 0
         loss_total = 0
-        pbar = tqdm(total=len(trainloader), unit='batch', ncols=80, desc=f'Epoch {epoch}: ')
+        pbar = tqdm(total=len(trainloader), unit='batch', ncols=80, desc=f'Epoch {epoch}: ') #for progress bar
         for i, (images, _) in enumerate(trainloader):
             images = images.to(device)
             optimiser.zero_grad()
             x_output, mean, logvar = model(images)
             # get the reconstructed output and the mean and logvar of the latent vairables
             kld, bce, loss = loss_function(x_output, images, mean, logvar, batch_size)
-            loss.backward()
+            loss.backward()# the back propagation step
             reconstruction_loss += bce
             kld_total += kld
-            loss_total += loss
-            optimiser.step()
-            pbar.update(1)
+            loss_total += loss#sum all the losses to get total loss
+            optimiser.step() # do the optimisation step
+            pbar.update(1)  #update progress bar
 
         reconstruction_loss /= len(trainloader)
         kld_total /= len(trainloader)
-        loss_total /= len(trainloader)
+        loss_total /= len(trainloader)#normalize the losses wrt the size of the batches
         writer.add_scalar('reconstruction loss', reconstruction_loss, epoch)
         writer.add_scalar('KLD loss', kld_total, epoch)
-        writer.add_scalar('Total Loss', loss_total, epoch)
+        writer.add_scalar('Total Loss', loss_total, epoch) #for tensorboard
         pbar.close()
 
         if count % print_every == 0:
