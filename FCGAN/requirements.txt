@@ -1,4 +1,4 @@
 tensorboard==1.14.0
 torch==1.2.0+cu92
 torchvision==0.4.0+cu92
-numpy==1.17.0
+numpy==1.22.0
